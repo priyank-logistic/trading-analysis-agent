@@ -316,6 +316,8 @@ export default function Home() {
               priceActionDetail={priceActionDetail}
               technicalIndicators={technicalIndicators}
               technicalIndicatorsAnalysis={technicalIndicatorsAnalysis}
+              higherTimeframe={higherTimeframe}
+              lowerTimeframe={lowerTimeframe}
             />
           </div>
 

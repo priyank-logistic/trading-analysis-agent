@@ -4,6 +4,8 @@ export default function PriceActionDetail({
   priceActionDetail,
   technicalIndicators,
   technicalIndicatorsAnalysis,
+  higherTimeframe,
+  lowerTimeframe,
 }) {
   if (!priceActionDetail && !technicalIndicatorsAnalysis) {
     return (
@@ -20,6 +22,210 @@ export default function PriceActionDetail({
       </div>
     );
   }
+
+  // Helper function to render price action analysis section
+  const renderPriceActionSection = (detail, timeframe, isHigher = false) => {
+    if (!detail) return null;
+
+    return (
+      <div
+        style={{
+          background: "#1e293b",
+          border: "1px solid #334155",
+          borderRadius: "12px",
+          overflow: "hidden",
+          marginBottom: "20px",
+        }}
+      >
+        <div
+          className="card-header"
+          style={{
+            background: isHigher ? "#475569" : "#334155",
+            padding: "20px",
+            borderBottom: "1px solid #475569",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <span style={{ fontSize: "1.5em" }}>📈</span>
+            <h2
+              style={{
+                color: "#e2e8f0",
+                fontSize: "1.3em",
+                fontWeight: 600,
+                margin: 0,
+              }}
+            >
+              {timeframe.toUpperCase()} Timeframe Analysis
+            </h2>
+          </div>
+        </div>
+        <div className="card-content" style={{ padding: "20px" }}>
+          {detail.detailed_explanation && (
+            <div style={{ marginBottom: "20px" }}>
+              <h3
+                style={{
+                  color: "#3b82f6",
+                  fontSize: "1em",
+                  fontWeight: 600,
+                  marginBottom: "10px",
+                }}
+              >
+                Detailed Explanation
+              </h3>
+              <p
+                style={{
+                  color: "#d1d5db",
+                  fontSize: "0.95em",
+                  lineHeight: "1.6",
+                }}
+              >
+                {detail.detailed_explanation}
+              </p>
+            </div>
+          )}
+
+          {detail.key_patterns && detail.key_patterns.length > 0 && (
+            <div style={{ marginBottom: "20px" }}>
+              <h3
+                style={{
+                  color: "#3b82f6",
+                  fontSize: "1em",
+                  fontWeight: 600,
+                  marginBottom: "10px",
+                }}
+              >
+                Key Patterns
+              </h3>
+              <ul
+                style={{
+                  color: "#d1d5db",
+                  fontSize: "0.95em",
+                  paddingLeft: "20px",
+                  lineHeight: "1.8",
+                }}
+              >
+                {detail.key_patterns.map((pattern, idx) => (
+                  <li key={idx}>{pattern}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {detail.momentum_analysis && (
+            <div style={{ marginBottom: "20px" }}>
+              <h3
+                style={{
+                  color: "#3b82f6",
+                  fontSize: "1em",
+                  fontWeight: 600,
+                  marginBottom: "10px",
+                }}
+              >
+                Momentum Analysis
+              </h3>
+              <p
+                style={{
+                  color: "#d1d5db",
+                  fontSize: "0.95em",
+                  lineHeight: "1.6",
+                }}
+              >
+                {detail.momentum_analysis}
+              </p>
+            </div>
+          )}
+
+          {detail.volume_analysis && (
+            <div style={{ marginBottom: "20px" }}>
+              <h3
+                style={{
+                  color: "#3b82f6",
+                  fontSize: "1em",
+                  fontWeight: 600,
+                  marginBottom: "10px",
+                }}
+              >
+                Volume Analysis
+              </h3>
+              <p
+                style={{
+                  color: "#d1d5db",
+                  fontSize: "0.95em",
+                  lineHeight: "1.6",
+                }}
+              >
+                {detail.volume_analysis}
+              </p>
+            </div>
+          )}
+
+          {detail.candle_formations && detail.candle_formations.length > 0 && (
+            <div style={{ marginBottom: "20px" }}>
+              <h3
+                style={{
+                  color: "#3b82f6",
+                  fontSize: "1em",
+                  fontWeight: 600,
+                  marginBottom: "10px",
+                }}
+              >
+                Candle Formations
+              </h3>
+              <ul
+                style={{
+                  color: "#d1d5db",
+                  fontSize: "0.95em",
+                  paddingLeft: "20px",
+                  lineHeight: "1.8",
+                }}
+              >
+                {detail.candle_formations.map((formation, idx) => (
+                  <li key={idx}>{formation}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {detail.market_sentiment && (
+            <div
+              style={{
+                background: "#0f172a",
+                padding: "15px",
+                borderRadius: "8px",
+                borderLeft: "3px solid #3b82f6",
+              }}
+            >
+              <h3
+                style={{
+                  color: "#3b82f6",
+                  fontSize: "0.95em",
+                  fontWeight: 600,
+                  marginBottom: "8px",
+                }}
+              >
+                Market Sentiment
+              </h3>
+              <p
+                style={{
+                  color: "#d1d5db",
+                  fontSize: "0.9em",
+                  lineHeight: "1.6",
+                }}
+              >
+                {detail.market_sentiment}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div
@@ -68,165 +274,187 @@ export default function PriceActionDetail({
             </div>
           </div>
           <div className="card-content" style={{ padding: "20px" }}>
-            {priceActionDetail.detailed_explanation && (
-              <div style={{ marginBottom: "20px" }}>
-                <h3
-                  style={{
-                    color: "#3b82f6",
-                    fontSize: "1em",
-                    fontWeight: 600,
-                    marginBottom: "10px",
-                  }}
-                >
-                  Detailed Explanation
-                </h3>
-                <p
-                  style={{
-                    color: "#d1d5db",
-                    fontSize: "0.95em",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  {priceActionDetail.detailed_explanation}
-                </p>
-              </div>
-            )}
+            {/* Check if priceActionDetail has separate higher and lower timeframe analyses */}
+            {priceActionDetail.higher_timeframe ||
+            priceActionDetail.lower_timeframe ? (
+              <>
+                {priceActionDetail.higher_timeframe &&
+                  renderPriceActionSection(
+                    priceActionDetail.higher_timeframe,
+                    higherTimeframe || "Higher",
+                    true
+                  )}
+                {priceActionDetail.lower_timeframe &&
+                  renderPriceActionSection(
+                    priceActionDetail.lower_timeframe,
+                    lowerTimeframe || "Lower",
+                    false
+                  )}
+              </>
+            ) : (
+              <>
+                {/* Fallback: Show combined analysis with timeframe mentions */}
+                {priceActionDetail.detailed_explanation && (
+                  <div style={{ marginBottom: "20px" }}>
+                    <h3
+                      style={{
+                        color: "#3b82f6",
+                        fontSize: "1em",
+                        fontWeight: 600,
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Detailed Explanation
+                    </h3>
+                    <p
+                      style={{
+                        color: "#d1d5db",
+                        fontSize: "0.95em",
+                        lineHeight: "1.6",
+                      }}
+                    >
+                      {priceActionDetail.detailed_explanation}
+                    </p>
+                  </div>
+                )}
 
-            {priceActionDetail.key_patterns &&
-              priceActionDetail.key_patterns.length > 0 && (
-                <div style={{ marginBottom: "20px" }}>
-                  <h3
+                {priceActionDetail.key_patterns &&
+                  priceActionDetail.key_patterns.length > 0 && (
+                    <div style={{ marginBottom: "20px" }}>
+                      <h3
+                        style={{
+                          color: "#3b82f6",
+                          fontSize: "1em",
+                          fontWeight: 600,
+                          marginBottom: "10px",
+                        }}
+                      >
+                        Key Patterns
+                      </h3>
+                      <ul
+                        style={{
+                          color: "#d1d5db",
+                          fontSize: "0.95em",
+                          paddingLeft: "20px",
+                          lineHeight: "1.8",
+                        }}
+                      >
+                        {priceActionDetail.key_patterns.map((pattern, idx) => (
+                          <li key={idx}>{pattern}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                {priceActionDetail.momentum_analysis && (
+                  <div style={{ marginBottom: "20px" }}>
+                    <h3
+                      style={{
+                        color: "#3b82f6",
+                        fontSize: "1em",
+                        fontWeight: 600,
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Momentum Analysis
+                    </h3>
+                    <p
+                      style={{
+                        color: "#d1d5db",
+                        fontSize: "0.95em",
+                        lineHeight: "1.6",
+                      }}
+                    >
+                      {priceActionDetail.momentum_analysis}
+                    </p>
+                  </div>
+                )}
+
+                {priceActionDetail.volume_analysis && (
+                  <div style={{ marginBottom: "20px" }}>
+                    <h3
+                      style={{
+                        color: "#3b82f6",
+                        fontSize: "1em",
+                        fontWeight: 600,
+                        marginBottom: "10px",
+                      }}
+                    >
+                      Volume Analysis
+                    </h3>
+                    <p
+                      style={{
+                        color: "#d1d5db",
+                        fontSize: "0.95em",
+                        lineHeight: "1.6",
+                      }}
+                    >
+                      {priceActionDetail.volume_analysis}
+                    </p>
+                  </div>
+                )}
+
+                {priceActionDetail.candle_formations &&
+                  priceActionDetail.candle_formations.length > 0 && (
+                    <div style={{ marginBottom: "20px" }}>
+                      <h3
+                        style={{
+                          color: "#3b82f6",
+                          fontSize: "1em",
+                          fontWeight: 600,
+                          marginBottom: "10px",
+                        }}
+                      >
+                        Candle Formations
+                      </h3>
+                      <ul
+                        style={{
+                          color: "#d1d5db",
+                          fontSize: "0.95em",
+                          paddingLeft: "20px",
+                          lineHeight: "1.8",
+                        }}
+                      >
+                        {priceActionDetail.candle_formations.map(
+                          (formation, idx) => (
+                            <li key={idx}>{formation}</li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  )}
+
+                {priceActionDetail.market_sentiment && (
+                  <div
                     style={{
-                      color: "#3b82f6",
-                      fontSize: "1em",
-                      fontWeight: 600,
-                      marginBottom: "10px",
+                      background: "#0f172a",
+                      padding: "15px",
+                      borderRadius: "8px",
+                      borderLeft: "3px solid #3b82f6",
                     }}
                   >
-                    Key Patterns
-                  </h3>
-                  <ul
-                    style={{
-                      color: "#d1d5db",
-                      fontSize: "0.95em",
-                      paddingLeft: "20px",
-                      lineHeight: "1.8",
-                    }}
-                  >
-                    {priceActionDetail.key_patterns.map((pattern, idx) => (
-                      <li key={idx}>{pattern}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-            {priceActionDetail.momentum_analysis && (
-              <div style={{ marginBottom: "20px" }}>
-                <h3
-                  style={{
-                    color: "#3b82f6",
-                    fontSize: "1em",
-                    fontWeight: 600,
-                    marginBottom: "10px",
-                  }}
-                >
-                  Momentum Analysis
-                </h3>
-                <p
-                  style={{
-                    color: "#d1d5db",
-                    fontSize: "0.95em",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  {priceActionDetail.momentum_analysis}
-                </p>
-              </div>
-            )}
-
-            {priceActionDetail.volume_analysis && (
-              <div style={{ marginBottom: "20px" }}>
-                <h3
-                  style={{
-                    color: "#3b82f6",
-                    fontSize: "1em",
-                    fontWeight: 600,
-                    marginBottom: "10px",
-                  }}
-                >
-                  Volume Analysis
-                </h3>
-                <p
-                  style={{
-                    color: "#d1d5db",
-                    fontSize: "0.95em",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  {priceActionDetail.volume_analysis}
-                </p>
-              </div>
-            )}
-
-            {priceActionDetail.candle_formations &&
-              priceActionDetail.candle_formations.length > 0 && (
-                <div style={{ marginBottom: "20px" }}>
-                  <h3
-                    style={{
-                      color: "#3b82f6",
-                      fontSize: "1em",
-                      fontWeight: 600,
-                      marginBottom: "10px",
-                    }}
-                  >
-                    Candle Formations
-                  </h3>
-                  <ul
-                    style={{
-                      color: "#d1d5db",
-                      fontSize: "0.95em",
-                      paddingLeft: "20px",
-                      lineHeight: "1.8",
-                    }}
-                  >
-                    {priceActionDetail.candle_formations.map(
-                      (formation, idx) => (
-                        <li key={idx}>{formation}</li>
-                      )
-                    )}
-                  </ul>
-                </div>
-              )}
-
-            {priceActionDetail.market_sentiment && (
-              <div
-                style={{
-                  background: "#0f172a",
-                  padding: "15px",
-                  borderRadius: "8px",
-                  borderLeft: "3px solid #3b82f6",
-                }}
-              >
-                <h3
-                  style={{
-                    color: "#3b82f6",
-                    fontSize: "0.95em",
-                    fontWeight: 600,
-                    marginBottom: "8px",
-                  }}
-                >
-                  Market Sentiment
-                </h3>
-                <p
-                  style={{
-                    color: "#d1d5db",
-                    fontSize: "0.9em",
-                    lineHeight: "1.6",
-                  }}
-                >
-                  {priceActionDetail.market_sentiment}
-                </p>
-              </div>
+                    <h3
+                      style={{
+                        color: "#3b82f6",
+                        fontSize: "0.95em",
+                        fontWeight: 600,
+                        marginBottom: "8px",
+                      }}
+                    >
+                      Market Sentiment
+                    </h3>
+                    <p
+                      style={{
+                        color: "#d1d5db",
+                        fontSize: "0.9em",
+                        lineHeight: "1.6",
+                      }}
+                    >
+                      {priceActionDetail.market_sentiment}
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

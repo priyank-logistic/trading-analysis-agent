@@ -228,12 +228,22 @@ START YOUR RESPONSE WITH {{ AND END WITH }}. Return ONLY the JSON object, nothin
     "trading_recommendation": "string"
   }},
   "price_action_detail": {{
-    "detailed_explanation": "string (comprehensive explanation of current price action patterns, candle formations, market structure, and what the price action is telling us)",
-    "key_patterns": ["string (list of key price action patterns identified)"],
-    "momentum_analysis": "string (analysis of current momentum - strong/weak, accelerating/decelerating)",
-    "volume_analysis": "string (analysis of volume patterns and what they indicate)",
-    "candle_formations": ["string (notable candle formations like doji, hammer, engulfing patterns, etc.)"],
-    "market_sentiment": "string (overall market sentiment based on price action)"
+    "higher_timeframe": {{
+      "detailed_explanation": "string (comprehensive explanation of {higher_timeframe} timeframe price action patterns, candle formations, market structure, and what the price action is telling us)",
+      "key_patterns": ["string (list of key price action patterns identified on {higher_timeframe} timeframe)"],
+      "momentum_analysis": "string (analysis of current momentum on {higher_timeframe} timeframe - strong/weak, accelerating/decelerating)",
+      "volume_analysis": "string (analysis of volume patterns on {higher_timeframe} timeframe and what they indicate)",
+      "candle_formations": ["string (notable candle formations on {higher_timeframe} timeframe like doji, hammer, engulfing patterns, etc.)"],
+      "market_sentiment": "string (overall market sentiment on {higher_timeframe} timeframe based on price action)"
+    }},
+    "lower_timeframe": {{
+      "detailed_explanation": "string (comprehensive explanation of {lower_timeframe} timeframe price action patterns, candle formations, market structure, and what the price action is telling us)",
+      "key_patterns": ["string (list of key price action patterns identified on {lower_timeframe} timeframe)"],
+      "momentum_analysis": "string (analysis of current momentum on {lower_timeframe} timeframe - strong/weak, accelerating/decelerating)",
+      "volume_analysis": "string (analysis of volume patterns on {lower_timeframe} timeframe and what they indicate)",
+      "candle_formations": ["string (notable candle formations on {lower_timeframe} timeframe like doji, hammer, engulfing patterns, etc.)"],
+      "market_sentiment": "string (overall market sentiment on {lower_timeframe} timeframe based on price action)"
+    }}
   }},
   "technical_indicators_analysis": {{
     "rsi": {{
@@ -503,13 +513,18 @@ MULTI-TIMEFRAME ANALYSIS (MTFA) - TOP-DOWN APPROACH:
 • Provide trading recommendation based on alignment status and Multi-Timeframe Confluence
 
 PRICE ACTION DETAILED ANALYSIS:
-• Provide comprehensive explanation of current price action patterns
-• Identify key price action patterns (breakouts, reversals, consolidations, etc.)
-• Analyze momentum - is it strong, weak, accelerating, or decelerating?
-• Analyze volume patterns - high volume on breakouts, low volume on consolidations, etc.
-• Identify notable candle formations (doji, hammer, engulfing patterns, shooting star, etc.)
-• Assess overall market sentiment based on price action (bullish, bearish, neutral, uncertain)
-• Explain what the price action is telling us about the current market condition
+• CRITICAL: Provide SEPARATE analysis for BOTH timeframes - higher timeframe ({higher_timeframe}) and lower timeframe ({lower_timeframe})
+• For EACH timeframe, provide:
+  - Comprehensive explanation of current price action patterns specific to that timeframe
+  - Identify key price action patterns (breakouts, reversals, consolidations, etc.) on that timeframe
+  - Analyze momentum on that timeframe - is it strong, weak, accelerating, or decelerating?
+  - Analyze volume patterns on that timeframe - high volume on breakouts, low volume on consolidations, etc.
+  - Identify notable candle formations on that timeframe (doji, hammer, engulfing patterns, shooting star, etc.)
+  - Assess overall market sentiment on that timeframe based on price action (bullish, bearish, neutral, uncertain)
+  - Explain what the price action is telling us about the current market condition on that specific timeframe
+• The higher_timeframe analysis should focus on the broader trend and structure
+• The lower_timeframe analysis should focus on entry precision and short-term patterns
+• Both analyses must be clearly separated and labeled with their respective timeframes
 
 TECHNICAL INDICATORS ANALYSIS:
 You MUST calculate all technical indicators from the provided CSV data. Use the higher timeframe data for calculations.

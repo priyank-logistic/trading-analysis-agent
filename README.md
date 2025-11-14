@@ -47,20 +47,6 @@ pip install -r requirements.txt
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-### 2. Frontend Setup
-
-1. **Navigate to frontend directory**:
-
-```bash
-cd frontend
-```
-
-2. **Install dependencies**:
-
-```bash
-npm install
-```
-
 ## Running the Application
 
 ### Backend (FastAPI)
@@ -101,14 +87,6 @@ curl -X POST "http://localhost:8000/analyze" \
 ```bash
 cd frontend
 ```
-
-3. **Start the frontend development server**:
-
-```bash
-npm run dev
-```
-
-The frontend will be available at: `http://localhost:3000`
 
 ## Usage
 

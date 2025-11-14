@@ -15,5 +15,10 @@ sentence-transformers
 scikit-learn
 fastapi
 uvicorn
-SmartApi
 pyotp
+pycryptodome
+python-dateutil
+# SmartApi (Angel One trading API) - using smartapi-python instead of SmartAPI
+smartapi-python
+logzero
+websocket-client

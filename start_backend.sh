@@ -33,5 +33,5 @@ fi
 echo "Starting backend server on http://localhost:8000"
 echo "Press Ctrl+C to stop"
 echo ""
-uvicorn api.main:app --reload --port 8000
+python -m uvicorn api.main:app --reload --port 8000
 

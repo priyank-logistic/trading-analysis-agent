@@ -15,3 +15,5 @@ sentence-transformers
 scikit-learn
 fastapi
 uvicorn
+SmartApi
+pyotp

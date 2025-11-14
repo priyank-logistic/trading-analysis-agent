@@ -16,7 +16,8 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 from utils import DATA_DIR
-from fetch_coin_data import fetch_klines, to_dataframe
+from fetch_coin_data import fetch_klines as fetch_crypto_klines, to_dataframe as crypto_to_dataframe
+from fetch_indian_market_data import fetch_klines as fetch_indian_klines, to_dataframe as indian_to_dataframe
 from prompts import SYSTEM_PROMPT, USER_TEMPLATE
 
 
@@ -25,14 +26,26 @@ def fetch_node(state: Dict[str, Any]) -> Dict[str, Any]:
     higher_timeframe = state.get("higher_timeframe", "4h")
     lower_timeframe = state.get("lower_timeframe", "15m")
     limit = state.get("limit", 30)
+    market_type = state.get("market_type", "crypto")
     
-    raw_higher = fetch_klines(coin, higher_timeframe, limit)
-    df_higher = to_dataframe(raw_higher)
+    if market_type == "indian":
+        fetch_func = fetch_indian_klines
+        to_df_func = indian_to_dataframe
+    else:
+        fetch_func = fetch_crypto_klines
+        to_df_func = crypto_to_dataframe
+    
+    raw_higher = fetch_func(coin, higher_timeframe, limit)
+    df_higher = to_df_func(raw_higher)
     csv_path_higher = f"{DATA_DIR}/{coin}_prices_{limit}candles_{higher_timeframe}.csv"
     df_higher.to_csv(csv_path_higher)
     
-    raw_lower = fetch_klines(coin, lower_timeframe, limit)
-    df_lower = to_dataframe(raw_lower)
+    if market_type == "indian":
+        import time
+        time.sleep(1)
+    
+    raw_lower = fetch_func(coin, lower_timeframe, limit)
+    df_lower = to_df_func(raw_lower)
     csv_path_lower = f"{DATA_DIR}/{coin}_prices_{limit}candles_{lower_timeframe}.csv"
     df_lower.to_csv(csv_path_lower)
     
@@ -169,12 +182,13 @@ def build_graph():
     return app
 
 
-def run_pipeline(app, coin: str, higher_timeframe: str = "4h", lower_timeframe: str = "15m", limit: int = 30) -> Dict[str, Any]:
+def run_pipeline(app, coin: str, higher_timeframe: str = "4h", lower_timeframe: str = "15m", limit: int = 30, market_type: str = "crypto") -> Dict[str, Any]:
     initial_state = {
         "coin": coin, 
         "higher_timeframe": higher_timeframe, 
         "lower_timeframe": lower_timeframe,
-        "limit": limit
+        "limit": limit,
+        "market_type": market_type
     }
     final_state = app.invoke(initial_state)
     return {
@@ -182,6 +196,7 @@ def run_pipeline(app, coin: str, higher_timeframe: str = "4h", lower_timeframe: 
         "higher_timeframe": higher_timeframe,
         "lower_timeframe": lower_timeframe,
         "limit": limit,
+        "market_type": market_type,
         "analysis": final_state.get("analysis", ""),
         "current_price": final_state.get("current_price"),
         "price_data": final_state.get("price_data", []),

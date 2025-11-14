@@ -25,6 +25,7 @@ class AnalyzeRequest(BaseModel):
     higher_timeframe: str = "4h"
     lower_timeframe: str = "15m"
     limit: int = 30
+    market_type: str = "crypto"  # "crypto" or "indian"
 
 
 @app.post("/analyze")
@@ -36,6 +37,7 @@ def analyze_coin(req: AnalyzeRequest):
             higher_timeframe=req.higher_timeframe,
             lower_timeframe=req.lower_timeframe,
             limit=req.limit,
+            market_type=req.market_type,
         )
         return result
     except Exception as e:

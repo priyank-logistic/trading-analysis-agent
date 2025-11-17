@@ -1,0 +1,54 @@
+name: Deploy on Push (master)
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            cd /var/www/html/trading-analysis-agent || exit 1
+
+            echo "Recording current HEAD..."
+            OLD_HEAD=$(git rev-parse --verify HEAD)
+
+            echo "Fetching origin/master..."
+            git fetch origin master
+
+            echo "Getting remote HEAD..."
+            REMOTE_HEAD=$(git rev-parse --verify origin/master)
+
+            echo "Computing changed files between $OLD_HEAD and $REMOTE_HEAD..."
+            CHANGED_FILES=$(git diff --name-only "$OLD_HEAD" "$REMOTE_HEAD" || true)
+            echo "$CHANGED_FILES"
+
+            echo "Pulling latest changes..."
+            git pull origin master
+
+            if echo "$CHANGED_FILES" | grep -qE "^requirements\.txt$"; then
+              echo "requirements.txt changed — installing Python dependencies..."
+              source /path/to/venv/bin/activate
+              pip3 install -r requirements.txt
+
+              echo "Restarting trading.service..."
+              sudo systemctl restart trading.service
+              echo "Restarted trading.service"
+            else
+              echo "No requirements.txt change — skipping Python install & service restart."
+              sudo systemctl restart trading.service
+            fi
+
+
+            echo "✅ Deployment finished successfully."

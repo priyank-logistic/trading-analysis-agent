@@ -11,7 +11,7 @@ import pytz
 from datetime import datetime, timedelta
 
 
-BINANCE_BASE = "https://www.binance.me/api/v3"
+BINANCE_BASE = "https://api.binance.com/api/v3"
 
 
 def fetch_klines(symbol: str, interval: str = "1d", limit: int = 30):

@@ -1,0 +1,45 @@
+Collecting ccxt
+  Downloading ccxt-4.5.19-py2.py3-none-any.whl.metadata (133 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.4/133.4 kB 2.2 MB/s eta 0:00:00
+Requirement already satisfied: setuptools>=60.9.0 in ./venv/lib/python3.12/site-packages (from ccxt) (80.9.0)
+Requirement already satisfied: certifi>=2018.1.18 in ./venv/lib/python3.12/site-packages (from ccxt) (2025.10.5)
+Requirement already satisfied: requests>=2.18.4 in ./venv/lib/python3.12/site-packages (from ccxt) (2.32.5)
+Collecting cryptography>=2.6.1 (from ccxt)
+  Downloading cryptography-46.0.3-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+Requirement already satisfied: typing_extensions>=4.4.0 in ./venv/lib/python3.12/site-packages (from ccxt) (4.15.0)
+Requirement already satisfied: aiohttp>=3.10.11 in ./venv/lib/python3.12/site-packages (from ccxt) (3.13.1)
+Collecting aiodns>=1.1.1 (from ccxt)
+  Downloading aiodns-3.5.0-py3-none-any.whl.metadata (5.8 kB)
+Requirement already satisfied: yarl>=1.7.2 in ./venv/lib/python3.12/site-packages (from ccxt) (1.22.0)
+Collecting coincurve==21.0.0 (from ccxt)
+  Downloading coincurve-21.0.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.0 kB)
+Collecting pycares>=4.9.0 (from aiodns>=1.1.1->ccxt)
+  Downloading pycares-4.11.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (4.5 kB)
+Requirement already satisfied: aiohappyeyeballs>=2.5.0 in ./venv/lib/python3.12/site-packages (from aiohttp>=3.10.11->ccxt) (2.6.1)
+Requirement already satisfied: aiosignal>=1.4.0 in ./venv/lib/python3.12/site-packages (from aiohttp>=3.10.11->ccxt) (1.4.0)
+Requirement already satisfied: attrs>=17.3.0 in ./venv/lib/python3.12/site-packages (from aiohttp>=3.10.11->ccxt) (25.4.0)
+Requirement already satisfied: frozenlist>=1.1.1 in ./venv/lib/python3.12/site-packages (from aiohttp>=3.10.11->ccxt) (1.8.0)
+Requirement already satisfied: multidict<7.0,>=4.5 in ./venv/lib/python3.12/site-packages (from aiohttp>=3.10.11->ccxt) (6.7.0)
+Requirement already satisfied: propcache>=0.2.0 in ./venv/lib/python3.12/site-packages (from aiohttp>=3.10.11->ccxt) (0.4.1)
+Collecting cffi>=2.0.0 (from cryptography>=2.6.1->ccxt)
+  Downloading cffi-2.0.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./venv/lib/python3.12/site-packages (from requests>=2.18.4->ccxt) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./venv/lib/python3.12/site-packages (from requests>=2.18.4->ccxt) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./venv/lib/python3.12/site-packages (from requests>=2.18.4->ccxt) (2.5.0)
+Collecting pycparser (from cffi>=2.0.0->cryptography>=2.6.1->ccxt)
+  Downloading pycparser-2.23-py3-none-any.whl.metadata (993 bytes)
+Downloading ccxt-4.5.19-py2.py3-none-any.whl (6.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.1/6.1 MB 857.2 kB/s eta 0:00:00
+Downloading coincurve-21.0.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 1.1 MB/s eta 0:00:00
+Downloading aiodns-3.5.0-py3-none-any.whl (8.1 kB)
+Downloading cryptography-46.0.3-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.5/4.5 MB 2.0 MB/s eta 0:00:00
+Downloading cffi-2.0.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (219 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 219.6/219.6 kB 2.3 MB/s eta 0:00:00
+Downloading pycares-4.11.0-cp312-cp312-manylinux_2_28_x86_64.whl (641 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 641.1/641.1 kB 2.6 MB/s eta 0:00:00
+Downloading pycparser-2.23-py3-none-any.whl (118 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 118.1/118.1 kB 2.7 MB/s eta 0:00:00
+Installing collected packages: pycparser, coincurve, cffi, pycares, cryptography, aiodns, ccxt
+Successfully installed aiodns-3.5.0 ccxt-4.5.19 cffi-2.0.0 coincurve-21.0.0 cryptography-46.0.3 pycares-4.11.0 pycparser-2.23

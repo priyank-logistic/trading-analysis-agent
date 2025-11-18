@@ -2,7 +2,7 @@
 LangGraph pipeline for CryptoAnalytica.
 
 Nodes:
-- fetch_node: fetch OHLCV from Binance API and save CSV
+- fetch_node: fetch OHLCV from crypto exchanges using CCXT and save CSV
 - analyze_node: directly read CSV data and generate analysis with LLM
 
 Edges orchestrate: fetch -> analyze

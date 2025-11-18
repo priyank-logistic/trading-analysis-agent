@@ -1,63 +1,67 @@
 """
-Fetch OHLCV time series from Binance API and save to CSV.
+Fetch OHLCV time series from crypto exchanges using CCXT and save to CSV.
 Usage: python fetch_coin_data.py --symbol BTCUSDT --days 90
 """
 import argparse
-import requests
 import pandas as pd
 import time
 from utils import DATA_DIR, iso_ts
 import pytz
 from datetime import datetime, timedelta
+import ccxt
 
 
-BINANCE_BASE = "https://api.binance.com/api/v3"
-
-
-def fetch_klines(symbol: str, interval: str = "1d", limit: int = 30):
+def fetch_klines(symbol: str, interval: str = "1d", limit: int = 30, exchange_name: str = "binance"):
     """
-    Fetch klines (candlestick) data from Binance API.
+    Fetch klines (candlestick) data from crypto exchange using CCXT.
     
     Args:
         symbol: Trading pair symbol (e.g., 'BTCUSDT')
         interval: Timeframe interval (e.g., '1m', '5m', '15m', '1h', '4h', '1d')
-        limit: Number of candles to fetch (default 30, max 1000)
+        limit: Number of candles to fetch (default 30)
+        exchange_name: Exchange name (default 'binance', can be 'binance', 'coinbase', 'kraken', etc.)
     
     Returns:
-        List of kline data from Binance API
+        List of OHLCV data from CCXT
     """
-    url = f"{BINANCE_BASE}/klines"
+    # Initialize exchange
+    try:
+        exchange_class = getattr(ccxt, exchange_name)
+    except AttributeError:
+        raise ValueError(f"Exchange '{exchange_name}' is not supported by CCXT. Available exchanges: {', '.join(ccxt.exchanges)}")
     
-    params = {
-        "symbol": symbol,
-        "interval": interval,
-        "limit": min(limit, 1000)
-    }
+    exchange = exchange_class({
+        'enableRateLimit': True,
+        'options': {
+            'defaultType': 'spot',  # Use spot trading
+        }
+    })
     
-    r = requests.get(url, params=params)
-    r.raise_for_status()
-    klines = r.json()
+    # Map interval to CCXT timeframe format
+    # CCXT uses standard timeframes like '1m', '5m', '15m', '1h', '4h', '1d'
+    timeframe = interval
     
-    return klines[-limit:] if len(klines) > limit else klines
+    try:
+        # Fetch OHLCV data
+        ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
+        return ohlcv
+    except Exception as e:
+        raise Exception(f"Error fetching data from {exchange_name}: {str(e)}")
 
 
 def to_dataframe(klines_data: list) -> pd.DataFrame:
     """
-    Convert Binance klines data to DataFrame.
+    Convert CCXT OHLCV data to DataFrame.
     
-    Binance klines format:
+    CCXT OHLCV format:
     [
-        [
-            open_time_ms, open, high, low, close, volume,
-            close_time_ms, quote_volume, trades_count,
-            taker_buy_base_volume, taker_buy_quote_volume, ignore
-        ],
+        [timestamp_ms, open, high, low, close, volume],
         ...
     ]
     """
     rows = []
     for kline in klines_data:
-        ts = int(kline[0] / 1000)
+        ts = int(kline[0] / 1000)  # Convert milliseconds to seconds
         
         rows.append({
             "timestamp": ts,
@@ -85,9 +89,10 @@ if __name__ == "__main__":
     parser.add_argument("--symbol", required=True, help="Trading pair symbol (e.g., BTCUSDT)")
     parser.add_argument("--interval", type=str, default="1d", help="Timeframe interval (e.g., 1m, 5m, 15m, 1h, 4h, 1d)")
     parser.add_argument("--limit", type=int, default=30, help="Number of candles to fetch (default 30)")
+    parser.add_argument("--exchange", type=str, default="binance", help="Exchange name (default: binance, options: binance, coinbase, kraken, etc.)")
     args = parser.parse_args()
 
-    raw = fetch_klines(args.symbol, args.interval, args.limit)
+    raw = fetch_klines(args.symbol, args.interval, args.limit, args.exchange)
     df = to_dataframe(raw)
     out_path = f"{DATA_DIR}/{args.symbol}_prices_{args.limit}candles_{args.interval}.csv"
     df.to_csv(out_path)

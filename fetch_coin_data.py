@@ -11,65 +11,100 @@ from datetime import datetime, timedelta
 import ccxt
 
 
-def fetch_klines(symbol: str, interval: str = "1d", limit: int = 30, exchange_name: str = "bybit"):
+def normalize_symbol(symbol: str, exchange_name: str) -> str:
+    """
+    Normalize symbol format for different exchanges.
+    Some exchanges use BTC/USDT, others use BTCUSDT.
+    """
+    if '/' in symbol:
+        return symbol
+    
+    quote_currencies = ['USDT', 'USD', 'BTC', 'ETH', 'BNB', 'USDC', 'EUR', 'GBP']
+    
+    for quote in quote_currencies:
+        if symbol.endswith(quote):
+            base = symbol[:-len(quote)]
+            if base:
+                return f"{base}/{quote}"
+    
+    return symbol
+
+
+_exchange_cache = {}
+
+
+def fetch_klines(symbol: str, interval: str = "1d", limit: int = 30, exchange_name: str = "coinbasepro"):
     """
     Fetch klines (candlestick) data from crypto exchange using CCXT.
-    Default exchange changed to BYBIT (binance removed).
-    """
-    try:
-        exchange_class = getattr(ccxt, exchange_name)
-    except AttributeError:
-        raise ValueError(
-            f"Exchange '{exchange_name}' is not supported by CCXT. "
-            f"Available exchanges: {', '.join(ccxt.exchanges)}"
-        )
-
-    exchange = exchange_class({
-        'enableRateLimit': True,
-        'options': {
-            'defaultType': 'spot',  
-        }
-    })
-
-    timeframe = interval
-
-    try:
-        ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
-        return ohlcv
-    except Exception as e:
-        raise Exception(f"Error fetching data from {exchange_name}: {str(e)}")
-
-    """
-    Fetch klines (candlestick) data from crypto exchange using CCXT.
+    Uses fallback exchanges if the primary exchange fails.
     
     Args:
-        symbol: Trading pair symbol (e.g., 'BTCUSDT')
+        symbol: Trading pair symbol (e.g., 'BTCUSDT' or 'BTC/USDT')
         interval: Timeframe interval (e.g., '1m', '5m', '15m', '1h', '4h', '1d')
         limit: Number of candles to fetch (default 30)
-        exchange_name: Exchange name (default 'binance', can be 'binance', 'coinbase', 'kraken', etc.)
+        exchange_name: Exchange name (default 'coinbasepro', can be 'coinbasepro', 'kraken', 'okx', etc.)
     
     Returns:
         List of OHLCV data from CCXT
     """
-    try:
-        exchange_class = getattr(ccxt, exchange_name)
-    except AttributeError:
-        raise ValueError(f"Exchange '{exchange_name}' is not supported by CCXT. Available exchanges: {', '.join(ccxt.exchanges)}")
+    fallback_exchanges = ['coinbasepro', 'okx', 'kraken', 'kucoin']
     
-    exchange = exchange_class({
-        'enableRateLimit': True,
-        'options': {
-            'defaultType': 'spot', 
-        }
-    })
+    if exchange_name in fallback_exchanges:
+        exchanges_to_try = [exchange_name] + [e for e in fallback_exchanges if e != exchange_name]
+    else:
+        exchanges_to_try = [exchange_name] + fallback_exchanges
     
-    timeframe = interval
+    exchanges_to_try = exchanges_to_try[:3]
     
-    try:
-        ohlcv = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
-        return ohlcv
-    except Exception as e:
-        raise Exception(f"Error fetching data from {exchange_name}: {str(e)}")
+    last_error = None
+    
+    for exchange_name_to_try in exchanges_to_try:
+        try:
+            cache_key = exchange_name_to_try
+            if cache_key not in _exchange_cache:
+                try:
+                    exchange_class = getattr(ccxt, exchange_name_to_try)
+                except AttributeError:
+                    continue
+                
+                _exchange_cache[cache_key] = exchange_class({
+                    'enableRateLimit': True,
+                    'timeout': 5000,
+                    'options': {
+                        'defaultType': 'spot',
+                    }
+                })
+            
+            exchange = _exchange_cache[cache_key]
+            
+            normalized_symbol = normalize_symbol(symbol, exchange_name_to_try)
+            
+            timeframe = interval
+            
+            ohlcv = exchange.fetch_ohlcv(normalized_symbol, timeframe, limit=limit)
+            
+            if ohlcv and len(ohlcv) > 0:
+                return ohlcv
+                
+        except ccxt.BaseError as e:
+            error_str = str(e)
+            last_error = error_str
+            if '451' in error_str or '403' in error_str or 'restricted' in error_str.lower() or 'unavailable' in error_str.lower() or 'blocked' in error_str.lower():
+                if cache_key in _exchange_cache:
+                    del _exchange_cache[cache_key]
+                continue
+            continue
+        except Exception as e:
+            last_error = str(e)
+            if cache_key in _exchange_cache:
+                del _exchange_cache[cache_key]
+            continue
+    
+    raise Exception(
+        f"Failed to fetch data from all attempted exchanges. "
+        f"Tried: {', '.join(exchanges_to_try)}. "
+        f"Last error: {last_error}"
+    )
 
 
 def to_dataframe(klines_data: list) -> pd.DataFrame:
@@ -105,15 +140,12 @@ def to_dataframe(klines_data: list) -> pd.DataFrame:
     return df
 
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--symbol", required=True, help="Trading pair symbol (e.g., BTCUSDT)")
     parser.add_argument("--interval", type=str, default="1d", help="Timeframe interval (e.g., 1m, 5m, 15m, 1h, 4h, 1d)")
     parser.add_argument("--limit", type=int, default=30, help="Number of candles to fetch (default 30)")
-    parser.add_argument("--exchange", type=str, default="bybit",
-                    help="Exchange name (default: bybit)")
+    parser.add_argument("--exchange", type=str, default="coinbasepro", help="Exchange name (default: coinbasepro, options: coinbasepro, kraken, okx, kucoin, etc.)")
     args = parser.parse_args()
 
     raw = fetch_klines(args.symbol, args.interval, args.limit, args.exchange)

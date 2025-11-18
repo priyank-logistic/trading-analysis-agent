@@ -39,7 +39,7 @@ jobs:
 
             if echo "$CHANGED_FILES" | grep -qE "^requirements\.txt$"; then
               echo "requirements.txt changed — installing Python dependencies..."
-              source /path/to/venv/bin/activate
+              source venv/bin/activate
               pip3 install -r requirements.txt
 
               echo "Restarting trading.service..."

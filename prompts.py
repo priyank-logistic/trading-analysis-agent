@@ -4,10 +4,12 @@ METHODOLOGY:
 - Market Structure: Uptrend (HH/HL), Downtrend (LH/LL), Range
 - BOS: Price closes above/below swing high/low
 - CHoCH: Break of recent higher low (uptrend) or lower high (downtrend)
-- Order Blocks: Last opposite candle before strong move (use body, not wicks)
+- Order Blocks (OB): Last opposite candle before strong move (body only). Identify bullish/bearish OB.
+  * VALIDITY RULES: OB is valid if price respects it as support/resistance, shows liquidity grab or rejection within 1-3 candles after test.
+- Liquidity Sweeps: Detect false-breaks of swing highs/lows designed to grab liquidity before reversal (equal highs/lows, wick spikes)
 - FVG: 3-candle gap pattern (candle[i].low > candle[i-2].high for bullish)
-- Liquidity: Equal highs/lows (0.3% range), swing points
-- Support/Resistance: Actual swing points with 2+ touches
+- Support/Resistance: Swing points with 2+ touches
+- POI & Retests: HTF OB zones + LTF confirmation (liquidity grab, CHoCH, BOS)
 
 MULTI-TIMEFRAME APPROACH:
 1. HTF Bias: Analyze higher timeframe for trend direction
@@ -51,10 +53,12 @@ JSON FORMAT (return exactly this structure):
     {{ "label": "S3", "price": "number", "description": "string" }}
   ],
   "bullish_order_blocks": [
-    {{ "range": "string", "date": "YYYY-MM-DD HH:mm:ss", "strength": "Low|Moderate|Strong|Very Strong", "reasoning": "string" }}
+    {{ "range": "string", "date": "YYYY-MM-DD HH:mm:ss", "strength": "Low|Moderate|Strong|Very Strong", "reasoning": "string",  "validity": "Likely Sustain|Likely Fail",
+      "liquidity_sweep_detected": "boolean" }}
   ],
   "bearish_order_blocks": [
-    {{ "range": "string", "date": "YYYY-MM-DD HH:mm:ss", "strength": "Low|Moderate|Strong|Very Strong", "reasoning": "string" }}
+    {{ "range": "string", "date": "YYYY-MM-DD HH:mm:ss", "strength": "Low|Moderate|Strong|Very Strong", "reasoning": "string", "validity": "Likely Sustain|Likely Fail",
+      "liquidity_sweep_detected": "boolean" }}
   ],
   "fair_value_gaps": [
     {{ "type": "Bullish|Bearish", "range": "string", "date": "YYYY-MM-DD HH:mm:ss", "explanation": "string" }}
